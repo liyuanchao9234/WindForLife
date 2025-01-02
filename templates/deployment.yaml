@@ -6,7 +6,7 @@ metadata:
     {{- include "windforlife.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.app.autoscaling.enabled }}
-  replicas: {{ .Values.app.replica.count }}
+  replicas: {{ .Values.app.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
