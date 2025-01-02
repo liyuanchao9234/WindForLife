@@ -44,9 +44,13 @@ app:
     # targetMemoryUtilizationPercentage: 80
 
 postgresql:
-  postgresqlUsername: "postgres"
-  postgresqlPassword: "postgressecret"
-  postgresqlDatabase: "mydatabase"
+ #now these infos are under auth
+  auth:
+    postgresqlUsername: "postgres"
+    postgresqlPassword: "postgressecret"
+    postgresqlDatabase: "mydatabase"
+
+
 
 redis:
   password: "mysupersecretredispassword"

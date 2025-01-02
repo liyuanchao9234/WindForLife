@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-postgresql-app
 data:
-  postgresql-db-name: {{ .Values.postgresql.postgresqlDatabase | quote }}
+  postgresql-db-name: {{ .Values.postgresql.auth.postgresqlDatabase | quote }}

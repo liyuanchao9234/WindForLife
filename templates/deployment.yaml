@@ -27,6 +27,22 @@ spec:
       serviceAccountName: {{ include "windforlife.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.app.podSecurityContext | nindent 8 }}
+      # add a init container for waiting postgres service
+      initContainers:
+        - name: wait-postgres
+          image: bitnami/postgresql:latest
+          command: ['sh', '-c', 'until pg_isready -h $POSTGRESQL_HOST -p $POSTGRESQL_PORT; do sleep 2; done']
+          env:        
+            - name: POSTGRESQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-postgresql-app
+                  key: postgresql-db-port
+            - name: POSTGRESQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-postgresql-app
+                  key: postgresql-db-host
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -53,11 +69,29 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis-app
                   key: redis-password
+            # add POSTGRESQL_USER as env from secret
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql-app
+                  key: postgres-username
+            # add POSTGRESQL_PASSWORD as env from secret
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql-app
+                  key: postgres-password
             - name: POSTGRESQL_DB_NAME
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Release.Name }}-postgresql-app
                   key: postgresql-db-name
+            # add POSTGRESQL_PORT
+            - name: POSTGRESQL_PORT
+              value: "5432" # Default PostgreSQL port
+            # add POSTGRESQL_HOST
+            - name: POSTGRESQL_HOST
+              value: {{ printf "%s-%s" .Release.Name "postgresql" }}
       {{- with .Values.app.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
