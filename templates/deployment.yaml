@@ -27,22 +27,24 @@ spec:
       serviceAccountName: {{ include "windforlife.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.app.podSecurityContext | nindent 8 }}
-      # add a init container for waiting postgres service
+      # add a init container for waiting postgres service ready
       initContainers:
         - name: wait-postgres
           image: bitnami/postgresql:latest
-          command: ['sh', '-c', 'until pg_isready -h $POSTGRESQL_HOST -p $POSTGRESQL_PORT; do sleep 2; done']
-          env:        
-            - name: POSTGRESQL_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Release.Name }}-postgresql-app
-                  key: postgresql-db-port
-            - name: POSTGRESQL_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Release.Name }}-postgresql-app
-                  key: postgresql-db-host
+          command: ['sh', '-c', 'until pg_isready -h {{ printf "%s-%s" .Release.Name "postgresql" }} -p 5432; do echo "Waiting for PostgreSQL..." && sleep 2; done']
+        env:
+        # provoiding this env var will lead the pg_isready to use it for the connection
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-postgresql-app
+              key: postgres-username
+        # provoiding this env var will lead the pg_isready to use it for the connection
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-postgresql-app
+              key: postgres-password
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
