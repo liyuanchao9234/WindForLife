@@ -19,27 +19,29 @@ app:
     type: ClusterIP
     port: 80
   ingress:
-    enabled: true
-    className: nginx
+    enabled: false
+    className: "nginx"
     hosts:
       - host: chart-example.local
         paths:
           - path: /
             pathType: ImplementationSpecific
     tls: []
+  # add default resource limit & request
   resources:
     limits:
-      cpu: 5m
-      memory: 16Mi
+      cpu: 10m
+      memory: 32Mi
     requests:
-      cpu: 2m
-      memory: 8Mi
+      cpu: 4m
+      memory: 16Mi
+  # activate HPA
   autoscaling:
-    enabled: false
+    enabled: true
     minReplicas: 1
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
-    # targetMemoryUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
 
 postgresql:
   poc: true

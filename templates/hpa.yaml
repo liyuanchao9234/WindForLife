@@ -1,5 +1,6 @@
 {{- if .Values.app.autoscaling.enabled }}
-apiVersion: autoscaling/v2beta1
+# modify api version from v2beta to v2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "windforlife.fullname" . }}
