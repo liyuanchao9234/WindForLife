@@ -44,11 +44,14 @@ app:
     # targetMemoryUtilizationPercentage: 80
 
 postgresql:
- #now these infos are under auth
+  poc: true
+  #now these vars are under auth
   auth:
     postgresqlUsername: "postgres"
     postgresqlPassword: "postgressecret"
     postgresqlDatabase: "mydatabase"
+  managedEndpoint: "managed-postgresql.windforlife.com"
+  managedPort: 5431
 
 
 

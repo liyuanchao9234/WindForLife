@@ -11,6 +11,7 @@ dependencies:
     #version: "~10.3.13"
     # update the postgresql chart to the latest version 
     version: "~16.3.0"
+    condition: postgresql.poc
   - name: redis
     repository: https://charts.bitnami.com/bitnami
     #version: "~12.8.3"
